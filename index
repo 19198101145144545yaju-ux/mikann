@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Proxy Player - Mikan Custom</title>
+    <style>
+        :root { --primary: #1a73e8; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; }
+        h1 { color: var(--primary); margin-bottom: 20px; font-size: 24px; }
+        input { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 30px; box-sizing: border-box; font-size: 16px; outline: none; transition: border-color 0.3s; }
+        input:focus { border-color: var(--primary); }
+        .btn-group { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { padding: 12px; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; color: white; }
+        .btn-main { background: var(--primary); grid-column: span 2; font-size: 18px; }
+        .btn-sub { background: #34a853; }
+        .btn-alt { background: #fbbc05; }
+        .info { margin-top: 20px; font-size: 12px; color: #666; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 Instant Proxy Player</h1>
+    <input type="text" id="urlInput" placeholder="https://www.google.com">
+    
+    <div class="btn-group">
+        <button class="btn-main" onclick="launch('google')">Google翻訳経由で開く</button>
+        <button class="btn-sub" onclick="launch('archive')">アーカイブ版で表示</button>
+        <button class="btn-alt" onclick="launch('direct')">直接ジャンプ(回避)</button>
+    </div>
+
+    <div class="info">
+        <b>【使い方】</b><br>
+        1. URLを入れて上のボタンを押す<br>
+        2. 別タブでサイトが開きます<br>
+        ※学校でGoogle翻訳が禁止されている場合は「アーカイブ版」を試してください。
+    </div>
+</div>
+
+<script>
+    function launch(mode) {
+        let target = document.getElementById('urlInput').value.trim();
+        if (!target) return alert('URLを入力してください');
+        if (!target.startsWith('http')) target = 'https://' + target;
+
+        let finalUrl = "";
+        
+        if (mode === 'google') {
+            // Google翻訳をプロキシにする
+            finalUrl = `https://translate.google.com/translate?sl=auto&tl=ja&u=${encodeURIComponent(target)}`;
+        } else if (mode === 'archive') {
+            // インターネットアーカイブ経由（ブロックされにくい）
+            finalUrl = `https://wayback.archive.org/web/${target}`;
+        } else if (mode === 'direct') {
+            // 直リンク（フィルターがガバガバな時用）
+            finalUrl = target;
+        }
+
+        window.open(finalUrl, '_blank');
+    }
+
+    // Enterキー対応
+    document.getElementById('urlInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') launch('google');
+    });
+</script>
+
+</body>
+</html>
